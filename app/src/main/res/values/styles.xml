@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Application Theme with Material Design Support -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/swift_blue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/LightGray</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+
+        <!-- Material Design Component Theme Overrides -->
+        <item name="materialButtonStyle">@style/PrimaryButton</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+        <item name="chipStyle">@style/Widget.MaterialComponents.Chip.Choice</item>
+        <item name="cardViewStyle">@style/CardViewStyle</item>
+    </style>
+
+    <!-- Dark Theme Base -->
+    <style name="AppTheme.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/swift_blue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/LightGray</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+
+    <!-- Button Styles - Compatible with Material Design -->
+    <style name="PrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">@color/swift_blue</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SecondaryButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/swift_blue</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- Text Styles -->
+    <style name="HeaderText" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SubheaderText" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="BodyText" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Card Styles -->
+    <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/cardBackground</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardCornerRadius">8dp</item>
+    </style>
+
+    <!-- Input Styles -->
+    <style name="InputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+    </style>
+
+    <!-- Divider Styles -->
+    <style name="Divider">
+        <item name="android:background">@color/divider</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <!-- Theme Variations with Material Design -->
+    <style name="BlueTheme" parent="AppTheme">
+        <item name="colorPrimary">#1976D2</item>
+        <item name="colorPrimaryDark">#1565C0</item>
+        <item name="colorAccent">#FF4081</item>
+    </style>
+
+    <style name="WarmTheme" parent="AppTheme">
+        <item name="colorPrimary">#FF5722</item>
+        <item name="colorPrimaryDark">#E64A19</item>
+        <item name="colorAccent">#FFC107</item>
+    </style>
+
+    <style name="DarkTheme" parent="AppTheme.Dark">
+        <item name="colorPrimary">#0056D2</item>
+        <item name="colorPrimaryDark">#003C91</item>
+        <item name="colorAccent">#03A9F4</item>
+    </style>
+
+    <style name="GreenTheme" parent="AppTheme">
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryDark">#388E3C</item>
+        <item name="colorAccent">#FF9800</item>
+    </style>
+
+    <style name="PurpleTheme" parent="AppTheme">
+        <item name="colorPrimary">#9C27B0</item>
+        <item name="colorPrimaryDark">#7B1FA2</item>
+        <item name="colorAccent">#E91E63</item>
+    </style>
+
+    <!-- Spinner Styles -->
+    <style name="CustomSpinner" parent="Widget.MaterialComponents.TextView">
+        <item name="android:background">@drawable/spinner_background</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:popupBackground">#FFFFFF</item>
+        <item name="android:dropDownWidth">match_parent</item>
+        <item name="android:textColor">@color/DeepGray</item>
+    </style>
+
+    <style name="CustomSpinnerItem" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/DeepGray</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+
+    <style name="CustomSpinnerDropdown" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/DeepGray</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">#FFFFFF</item>
+    </style>
+</resources>

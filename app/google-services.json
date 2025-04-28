@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "947947789794",
+    "project_id": "swift-bus",
+    "storage_bucket": "swift-bus.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947947789794:android:3b58e46dd2f858f790adbb",
+        "android_client_info": {
+          "package_name": "com.android.swifbus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAacAlwtx2S_doQUg35VjbKEbv-yevuzSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947947789794:android:dc1195d0116ecde090adbb",
+        "android_client_info": {
+          "package_name": "com.android.swiftbus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAacAlwtx2S_doQUg35VjbKEbv-yevuzSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

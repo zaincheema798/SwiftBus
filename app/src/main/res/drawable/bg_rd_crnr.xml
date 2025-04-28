@@ -1,0 +1,11 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/swift_blue" /> <!-- Light grey background -->
+    <stroke
+        android:width="2dp"
+        android:color="#F4F4F4" /> <!-- Border color -->
+    <corners android:radius="12dp" /> <!-- Rounded corners -->
+    <padding
+        android:left="8dp"
+        android:right="8dp"
+         /> <!-- Optional padding -->
+</shape>

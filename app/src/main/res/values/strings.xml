@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Swift Bus</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_web_client_id">AIzaSyD-ANzh_twDP4YpIQu0geRqE4ca1TifO2c</string>
+    <!-- Edit Profile Strings -->
+    <string name="title_edit_profile">Edit Profile</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="hint_email">Email Address</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="hint_gender">Gender</string>
+    <string name="hint_age">Age</string>
+    <string name="hint_blood_group">Blood Group</string>
+    <string name="hint_address">Address</string>
+    <string name="hint_emergency_name">Contact Name</string>
+    <string name="hint_emergency_phone">Contact Phone</string>
+    <string name="hint_emergency_relation">Relationship</string>
+    <string name="hint_current_password">Current Password</string>
+    <string name="hint_new_password">New Password</string>
+    <string name="hint_confirm_password">Confirm New Password</string>
+    <string name="section_personal_info">Personal Information</string>
+    <string name="section_emergency_contact">Emergency Contact</string>
+    <string name="section_change_password">Change Password</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save Changes</string>
+    <string name="toast_profile_updated">Profile updated successfully</string>
+    <string name="toast_profile_update_failed">Failed to update profile</string>
+
+    <!-- Gender Options -->
+    <string-array name="gender_options">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+        <item>Prefer not to say</item>
+    </string-array>
+
+    <!-- Blood Group Options -->
+    <string-array name="blood_group_options">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>Don\'t know</item>
+    </string-array>
+</resources>

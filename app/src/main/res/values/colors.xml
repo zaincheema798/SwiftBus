@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="swift_blue">#0056D2</color>
+    <color name="DeepGray">#212121</color>
+    <color name="Energeticyellow">#F9A825</color>
+    <color name="colorPrimaryDark">#01439B</color>
+
+    <!-- Profile specific colors -->
+    <color name="profile_background">#F5F7FA</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="divider">#EEEEEE</color>
+    <color name="gold">#FFC107</color>
+    <color name="error_color">#F44336</color>
+    <color name="LightGray">#DDDDDD</color>
+    <color name="Light_pink">#FBE4D6</color>
+
+    <color name="colorPrimary">#1976D2</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#757575</color>
+    <color name="dividerColor">#BDBDBD</color>
+    <color name="backgroundColor">#F5F5F5</color>
+    <color name="cardBackground">#FFFFFF</color>
+
+    <!-- Primary colors -->
+    <color name="primary">#1976D2</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="primary_light">#BBDEFB</color>
+
+    <!-- Secondary colors -->
+    <color name="secondary">#5C6BC0</color>
+    <color name="secondary_dark">#303F9F</color>
+    <color name="secondary_light">#C5CAE9</color>
+
+    <!-- Accent colors -->
+    <color name="accent">#FF4081</color>
+
+    <!-- Background colors -->
+    <color name="background_light">#F5F5F5</color>
+
+    <!-- Text colors -->
+    <color name="text_dark">#212121</color>
+    <color name="divider_color">#BDBDBD</color>
+
+    <!-- Status colors -->
+    <color name="status_pending">#FF9800</color>
+    <color name="status_confirmed">#4CAF50</color>
+    <color name="status_cancelled">#F44336</color>
+
+    <!-- Alert colors -->
+    <color name="success_dark">#2E7D32</color>
+    <color name="success_light">#C8E6C9</color>
+    <color name="warning_dark">#F57F17</color>
+    <color name="warning_light">#FFF8E1</color>
+    <color name="error_dark">#C62828</color>
+    <color name="error_light">#FFCDD2</color>
+    <color name="info_dark">#0288D1</color>
+    <color name="info_light">#E1F5FE</color>
+
+    <!-- Payment service colors -->
+    <color name="easypaisa_green">#389E0D</color>
+</resources>

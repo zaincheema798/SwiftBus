@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Tracking">
+
+  <com.google.android.material.card.MaterialCardView
+      android:id="@+id/searchCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="16dp"
+      app:cardCornerRadius="8dp"
+      app:cardElevation="4dp"
+      app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+      <com.google.android.material.textfield.TextInputLayout
+          android:id="@+id/busNumberInputLayout"
+          style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:hint="Enter Route"
+          app:endIconDrawable="@drawable/track_svgrepo_com"
+          app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/busNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textColor="@color/DeepGray"
+            android:textSize="16sp" />
+      </com.google.android.material.textfield.TextInputLayout>
+
+      <com.google.android.material.button.MaterialButton
+          android:id="@+id/trackButton"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:backgroundTint="@color/swift_blue"
+          android:paddingVertical="12dp"
+          android:text="Track Route"
+          android:textColor="@color/white"
+          android:textSize="16sp"
+          app:cornerRadius="8dp" />
+    </LinearLayout>
+  </com.google.android.material.card.MaterialCardView>
+
+  <com.google.android.material.card.MaterialCardView
+      android:id="@+id/infoCard"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="16dp"
+      app:cardCornerRadius="8dp"
+      app:cardElevation="4dp"
+      app:layout_constraintTop_toBottomOf="@id/searchCard"
+      android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="Bus Information"
+          android:textSize="18sp"
+          android:textStyle="bold"
+          android:textColor="@color/swift_blue"
+          android:layout_marginBottom="8dp"/>
+
+      <GridLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:columnCount="2"
+          android:rowCount="6"
+          android:alignmentMode="alignBounds">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Source:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/sourceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MBD"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Destination:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/destinationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LHR"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Location:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/currentLocationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GRW"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/statusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="On Way To Destination"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dispatch Time:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/dispatchTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="08:30 AM 12/12/2024"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expected Arrival:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/DeepGray"/>
+
+        <TextView
+            android:id="@+id/arrivalTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="11:30 AM 12/12/2024"
+            android:textSize="14sp"
+            android:textColor="@color/DeepGray"
+            android:layout_marginStart="8dp"/>
+      </GridLayout>
+    </LinearLayout>
+  </com.google.android.material.card.MaterialCardView>
+
+  <FrameLayout
+      android:id="@+id/mapContainer"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_marginTop="16dp"
+      app:layout_constraintTop_toBottomOf="@id/infoCard"
+      app:layout_constraintBottom_toBottomOf="parent">
+
+    <ImageView
+        android:id="@+id/placeholderImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/paper_map_cuate"
+        android:scaleType="fitCenter"
+        android:padding="24dp"/>
+
+    <fragment
+        android:id="@+id/googleMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/swift_blue"/>
+  </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

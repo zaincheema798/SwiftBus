@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "947947789794",
+    "project_id": "swift-bus",
+    "storage_bucket": "swift-bus.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947947789794:android:dc1195d0116ecde090adbb",
+        "android_client_info": {
+          "package_name": "com.android.swiftbus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947947789794-5rtrt74631tps0sfpcl90upp9oo10djf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.swiftbus",
+            "certificate_hash": "2e64bb3d879d2af1f8080a8ec4243a342857c067"
+          }
+        },
+        {
+          "client_id": "947947789794-iscjkm2umu52f9o5ml3hsb0laobj71m7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAacAlwtx2S_doQUg35VjbKEbv-yevuzSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947947789794-iscjkm2umu52f9o5ml3hsb0laobj71m7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

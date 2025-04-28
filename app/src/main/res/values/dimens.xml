@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General spacing dimensions -->
+    <dimen name="spacing_tiny">2dp</dimen>
+    <dimen name="spacing_small">4dp</dimen>
+    <dimen name="spacing_medium">8dp</dimen>
+    <dimen name="spacing_normal">12dp</dimen>
+    <dimen name="spacing_large">16dp</dimen>
+    <dimen name="spacing_xlarge">24dp</dimen>
+    <dimen name="spacing_xxlarge">32dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_micro">12sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_xlarge">20sp</dimen>
+    <dimen name="text_size_heading">22sp</dimen>
+    <dimen name="text_size_title">24sp</dimen>
+
+    <!-- Button dimensions -->
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_min_width">120dp</dimen>
+    <dimen name="button_padding_horizontal">16dp</dimen>
+    <dimen name="button_padding_vertical">8dp</dimen>
+    <dimen name="button_corner_radius">4dp</dimen>
+
+    <!-- Seat map dimensions -->
+    <dimen name="seat_width">40dp</dimen>
+    <dimen name="seat_height">40dp</dimen>
+    <dimen name="seat_margin">4dp</dimen>
+    <dimen name="aisle_width">20dp</dimen>
+
+    <!-- Vehicle diagram dimensions -->
+    <dimen name="vehicle_diagram_height">200dp</dimen>
+    <dimen name="vehicle_diagram_width">300dp</dimen>
+
+    <!-- Form element dimensions -->
+    <dimen name="spinner_height">48dp</dimen>
+    <dimen name="spinner_padding">8dp</dimen>
+    <dimen name="checkbox_padding">8dp</dimen>
+    <dimen name="edittext_height">48dp</dimen>
+    <dimen name="edittext_padding">12dp</dimen>
+
+    <!-- Card dimensions -->
+    <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+
+    <!-- Divider dimensions -->
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_margin_vertical">8dp</dimen>
+
+    <!-- Icon dimensions -->
+    <dimen name="icon_size_small">24dp</dimen>
+    <dimen name="icon_size_medium">36dp</dimen>
+    <dimen name="icon_size_large">48dp</dimen>
+</resources>
