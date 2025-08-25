@@ -1,29 +1,39 @@
 package com.android.swiftbus;
 
+import static com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.concurrent.Executors;
+
 public class Signup extends AppCompatActivity {
+
+    private static final String TAG = "Signup";
 
     FirebaseAuth auth;
     Button signup;
@@ -31,35 +41,17 @@ public class Signup extends AppCompatActivity {
     EditText name;
     EditText email;
     EditText password;
-    private SignInClient oneTapClient;
-
-    private final ActivityResultLauncher<IntentSenderRequest> signInLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    try {
-                        SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
-                        String idToken = credential.getGoogleIdToken();
-                        if (idToken != null) {
-                            firebaseAuthWithGoogle(idToken);
-                        } else {
-                            Toast.makeText(Signup.this, "No ID token received", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (ApiException e) {
-                        Toast.makeText(Signup.this, "Sign in failed", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(Signup.this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
-                }
-            });
+    private CredentialManager credentialManager;
+    private CancellationSignal cancellationSignal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // Initialize Firebase Auth and One Tap client
+        // Initialize Firebase Auth and Credential Manager
         auth = FirebaseAuth.getInstance();
-        oneTapClient = Identity.getSignInClient(this);
+        credentialManager = CredentialManager.create(this);
 
         signup = findViewById(R.id.signupbutton);
         name = findViewById(R.id.name);
@@ -72,9 +64,9 @@ public class Signup extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emailText = email.getText().toString();
-                String passwordText = password.getText().toString();
-                String nameText = name.getText().toString();
+                String emailText = email.getText().toString().trim();
+                String passwordText = password.getText().toString().trim();
+                String nameText = name.getText().toString().trim();
 
                 // Validate input here if needed
                 if (!emailText.isEmpty() && !passwordText.isEmpty()) {
@@ -85,38 +77,126 @@ public class Signup extends AppCompatActivity {
                                     db.collection("Users")
                                             .document(auth.getCurrentUser().getUid())
                                             .set(new UserProfile(null, nameText, null, emailText, null, null, null, null, null, 0, 0, 0));
-                                    startActivity(new Intent(Signup.this, Main.class));
-                                    finish();
+                                    navigateToMainActivity();
                                 } else {
-                                    Toast.makeText(Signup.this, task.getException() + "", Toast.LENGTH_SHORT).show();
+                                    String errorMessage = task.getException() != null ?
+                                            task.getException().getMessage() : "Account creation failed";
+                                    Toast.makeText(Signup.this, errorMessage, Toast.LENGTH_SHORT).show();
                                 }
                             });
-                }
-                else {
+                } else {
                     Toast.makeText(Signup.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Cancel any ongoing credential operations
+        if (cancellationSignal != null && !cancellationSignal.isCanceled()) {
+            cancellationSignal.cancel();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Cancel credential operation if in progress
+        if (cancellationSignal != null && !cancellationSignal.isCanceled()) {
+            cancellationSignal.cancel();
+        }
+        super.onBackPressed();
+    }
+
     private void signInWithGoogle() {
-        BeginSignInRequest signInRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(
-                        BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                                .setSupported(true)
-                                .setServerClientId(getString(R.string.default_web_client_id))
-                                .setFilterByAuthorizedAccounts(false)
-                                .build())
+        // Cancel any previous operation
+        if (cancellationSignal != null && !cancellationSignal.isCanceled()) {
+            cancellationSignal.cancel();
+        }
+
+        // Create new cancellation signal
+        cancellationSignal = new CancellationSignal();
+
+        // Create Google ID option
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(getString(R.string.default_web_client_id))
                 .build();
 
-        oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(result -> {
-                    IntentSenderRequest request = new IntentSenderRequest.Builder(
-                            result.getPendingIntent().getIntentSender()).build();
-                    signInLauncher.launch(request);
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(Signup.this, "Sign in error, please try again", Toast.LENGTH_SHORT).show());
+        // Create the Credential Manager request
+        GetCredentialRequest request = new GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build();
+
+        // Launch Credential Manager
+        credentialManager.getCredentialAsync(
+                this,
+                request,
+                cancellationSignal,
+                Executors.newSingleThreadExecutor(),
+                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                    @Override
+                    public void onResult(GetCredentialResponse result) {
+                        // Check if operation was cancelled
+                        if (cancellationSignal.isCanceled()) {
+                            return;
+                        }
+                        handleSignIn(result.getCredential());
+                    }
+
+                    @Override
+                    public void onError(@NonNull GetCredentialException exception) {
+                        // Check if operation was cancelled
+                        if (cancellationSignal.isCanceled()) {
+                            Log.d(TAG, "Google Sign-In cancelled by user");
+                            return;
+                        }
+
+                        Log.e(TAG, "Google Sign-In failed: " + exception.getMessage());
+                        runOnUiThread(() -> {
+                            // Check if activity is still valid before showing toast
+                            if (!isFinishing() && !isDestroyed()) {
+                                Toast.makeText(Signup.this, "Google Sign-In failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+        );
+    }
+
+    private void handleSignIn(Credential credential) {
+        // Check if operation was cancelled
+        if (cancellationSignal != null && cancellationSignal.isCanceled()) {
+            return;
+        }
+
+        // Check if credential is of type Google ID
+        if (credential instanceof CustomCredential customCredential
+                && credential.getType().equals(TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
+            try {
+                // Create Google ID Token
+                Bundle credentialData = customCredential.getData();
+                GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credentialData);
+
+                // Sign in to Firebase using the token
+                firebaseAuthWithGoogle(googleIdTokenCredential.getIdToken());
+            } catch (Exception e) {
+                Log.e(TAG, "Error creating Google ID Token: " + e.getMessage());
+                runOnUiThread(() -> {
+                    if (!isFinishing() && !isDestroyed()) {
+                        Toast.makeText(Signup.this, "Authentication error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } else {
+            Log.w(TAG, "Credential is not of type Google ID!");
+            runOnUiThread(() -> {
+                if (!isFinishing() && !isDestroyed()) {
+                    Toast.makeText(Signup.this, "Invalid credential type", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
@@ -124,11 +204,26 @@ public class Signup extends AppCompatActivity {
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        Toast.makeText(Signup.this, "Signed in as " + (user != null ? user.getDisplayName() : ""), Toast.LENGTH_SHORT).show();
+                        // Sign in success
+                        Log.d(TAG, "signInWithCredential:success");
+                        if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                            FirebaseUser user = auth.getCurrentUser();
+                            String nameText = user.getDisplayName();
+                            String emailText = user.getEmail();
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("Users")
+                                    .document(auth.getCurrentUser().getUid())
+                                    .set(new UserProfile(null, nameText, null, emailText, null, null, null, null, null, 0, 0, 0));
+
+                        }
                         navigateToMainActivity();
                     } else {
-                        Toast.makeText(Signup.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                        // Sign in failed
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        String errorMessage = task.getException() != null ?
+                                task.getException().getMessage() : "Firebase authentication failed";
+                        Toast.makeText(Signup.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

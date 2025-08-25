@@ -107,21 +107,7 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Email -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        app:startIconDrawable="@drawable/ic_email">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edit_email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Email Address"
-                            android:inputType="textEmailAddress" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Phone Number -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -369,9 +355,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancel_button"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/primary"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:padding="12dp"

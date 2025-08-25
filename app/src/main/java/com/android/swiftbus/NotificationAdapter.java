@@ -44,13 +44,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return notificationList.size();
     }
 
+    public void updateData(List<Notification> notificationList) {
+        this.notificationList = notificationList;
+        notifyDataSetChanged();
+    }
+
     public static class NAViewHolder extends RecyclerView.ViewHolder {
         TextView textNotification;
         TextView timeNotification;
 
         public NAViewHolder(@NonNull View itemView) {
             super(itemView);
-            textNotification = itemView.findViewById(R.id.textNotification);
+            textNotification= itemView.findViewById(R.id.textNotification);
             timeNotification = itemView.findViewById(R.id.timeNotification);
         }
     }

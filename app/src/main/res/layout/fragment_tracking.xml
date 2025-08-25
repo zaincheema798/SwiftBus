@@ -26,7 +26,7 @@
           style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:hint="Enter Route"
+          android:hint="Enter booking number"
           app:endIconDrawable="@drawable/track_svgrepo_com"
           app:endIconMode="custom">
 

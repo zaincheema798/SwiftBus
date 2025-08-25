@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,6 +121,14 @@ public class Booking extends Fragment {
     // Route data
     private RecentRoute route;
 
+    // New offer-related variables
+    private OfferModel appliedOffer;
+    private TextView appliedOfferText;
+    private Button removeOfferButton;
+    private Button browseOffersButton;
+    private LinearLayout appliedOfferLayout;
+    private int offerDiscount = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -200,7 +209,267 @@ public class Booking extends Fragment {
 
         // Initialize book button
         bookTicketButton = view.findViewById(R.id.button_book_ticket);
+
+        appliedOfferText = view.findViewById(R.id.text_applied_offer);
+        removeOfferButton = view.findViewById(R.id.button_remove_offer);
+        browseOffersButton = view.findViewById(R.id.button_browse_offers);
+        appliedOfferLayout = view.findViewById(R.id.layout_applied_offer);
+
+        // Setup offer buttons
+        setupOfferButtons();
+
+        // Check if we received offer data from intent
+        checkForOfferData();
     }
+    private void setupOfferButtons() {
+        // Browse offers button
+        browseOffersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireContext(), Offer_Discounts.class);
+                startActivity(intent);
+            }
+        });
+
+        // Remove offer button
+        removeOfferButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeAppliedOffer();
+            }
+        });
+    }
+
+    private void checkForOfferData() {
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey("offer_id")) {
+            // Create offer model from bundle data
+            OfferModel offer = new OfferModel();
+            offer.setOfferId(arguments.getString("offer_id"));
+            offer.setTitle(arguments.getString("offer_title"));
+            offer.setOfferCode(arguments.getString("offer_code"));
+            offer.setOfferType(arguments.getString("offer_type"));
+            offer.setDiscountType(arguments.getString("discount_type"));
+            offer.setDiscountPercentage(arguments.getInt("discount_percentage"));
+            offer.setDiscountAmount(arguments.getInt("discount_amount"));
+            offer.setMaxDiscountAmount(arguments.getInt("max_discount_amount"));
+            offer.setMinimumFare(arguments.getInt("minimum_fare"));
+            offer.setMinimumPassengers(arguments.getInt("minimum_passengers"));
+            offer.setAdvanceBookingDays(arguments.getInt("advance_booking_days"));
+            offer.setSourceCity(arguments.getString("source_city"));
+            offer.setDestinationCity(arguments.getString("destination_city"));
+            offer.setApplicableSeatType(arguments.getString("applicable_seat_type"));
+            offer.setApplicableVehicleType(arguments.getString("applicable_vehicle_type"));
+
+            // Apply the offer
+            applyOffer(offer);
+
+            // Pre-select source and destination if specified in offer
+            if (offer.getSourceCity() != null && offer.getDestinationCity() != null) {
+                preSelectRouteFromOffer(offer);
+            }
+        }
+    }
+
+    private void preSelectRouteFromOffer(OfferModel offer) {
+        // Add offer cities to sources and destinations if not already present
+        if (!sources.contains(offer.getSourceCity())) {
+            sources.add(offer.getSourceCity());
+        }
+        if (!destinations.contains(offer.getDestinationCity())) {
+            destinations.add(offer.getDestinationCity());
+        }
+
+        // Update adapters
+        if (sourceSpinner.getAdapter() != null) {
+            ((ArrayAdapter) sourceSpinner.getAdapter()).notifyDataSetChanged();
+        }
+        if (destSpinner.getAdapter() != null) {
+            ((ArrayAdapter) destSpinner.getAdapter()).notifyDataSetChanged();
+        }
+
+        // Select the cities in spinners
+        int sourceIndex = sources.indexOf(offer.getSourceCity());
+        int destIndex = destinations.indexOf(offer.getDestinationCity());
+
+        if (sourceIndex >= 0) {
+            sourceSpinner.setSelection(sourceIndex);
+            selectedSource = offer.getSourceCity();
+        }
+        if (destIndex >= 0) {
+            destSpinner.setSelection(destIndex);
+            selectedDestination = offer.getDestinationCity();
+        }
+    }
+
+    private void applyOffer(OfferModel offer) {
+        appliedOffer = offer;
+
+        // Show applied offer UI
+        appliedOfferLayout.setVisibility(View.VISIBLE);
+        browseOffersButton.setVisibility(View.GONE);
+
+        // Update applied offer text
+        String offerText = offer.getTitle() + " (" + offer.getOfferCode() + ")";
+        appliedOfferText.setText(offerText);
+
+        // Update fare display
+        updateFareDisplay();
+
+        // Show success message
+        messageText.setText("Offer applied successfully! " + offer.getDescription());
+        messageText.setVisibility(View.VISIBLE);
+
+        Toast.makeText(requireContext(), "Offer applied: " + offer.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void removeAppliedOffer() {
+        appliedOffer = null;
+        offerDiscount = 0;
+
+        // Hide applied offer UI
+        appliedOfferLayout.setVisibility(View.GONE);
+        browseOffersButton.setVisibility(View.VISIBLE);
+
+        // Update fare display
+        updateFareDisplay();
+
+        // Hide message
+        messageText.setVisibility(View.GONE);
+
+        Toast.makeText(requireContext(), "Offer removed", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isOfferApplicable(OfferModel offer, int baseFare) {
+        if (offer == null || !offer.isValidOffer()) {
+            return false;
+        }
+
+        // Check minimum fare requirement
+        if (offer.getMinimumFare() > 0 && baseFare < offer.getMinimumFare()) {
+            return false;
+        }
+
+        // Check minimum passengers requirement
+        if (offer.getMinimumPassengers() > 0 && selectedPassengers < offer.getMinimumPassengers()) {
+            return false;
+        }
+
+        // Check route-specific requirements
+        if ("ROUTE_SPECIFIC".equals(offer.getOfferType())) {
+            if (offer.getSourceCity() != null && !offer.getSourceCity().equals(selectedSource)) {
+                return false;
+            }
+            if (offer.getDestinationCity() != null && !offer.getDestinationCity().equals(selectedDestination)) {
+                return false;
+            }
+        }
+
+        // Check seat type requirements
+        if ("SEAT_TYPE".equals(offer.getOfferType())) {
+            if (offer.getApplicableSeatType() != null && !offer.getApplicableSeatType().equals(selectedSeatType)) {
+                return false;
+            }
+        }
+
+        // Check vehicle type requirements
+        if ("VEHICLE_TYPE".equals(offer.getOfferType())) {
+            if (offer.getApplicableVehicleType() != null && !offer.getApplicableVehicleType().equals(selectedVehicleType)) {
+                return false;
+            }
+        }
+
+        // Check advance booking requirements
+        if ("EARLY_BOOKING".equals(offer.getOfferType())) {
+            if (offer.getAdvanceBookingDays() > 0 && selectedDate != null) {
+                long daysDifference = (selectedDate.getTime() - System.currentTimeMillis()) / (1000 * 60 * 60 * 24);
+                if (daysDifference < offer.getAdvanceBookingDays()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void updateFareDisplay() {
+        // Calculate the base fare (existing logic)
+        int calculatedBaseFare = baseFare;
+
+        // Apply ticket type adjustment
+        if (!selectedTicketType.isEmpty() && ticketTypePrices.containsKey(selectedTicketType)) {
+            int percentage = ticketTypePrices.get(selectedTicketType);
+            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
+        }
+
+        // Apply seat type adjustment
+        if (!selectedSeatType.isEmpty() && seatTypePrices.containsKey(selectedSeatType)) {
+            int percentage = seatTypePrices.get(selectedSeatType);
+            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
+        }
+
+        // Apply vehicle type adjustment
+        if (!selectedVehicleType.isEmpty() && vehicleTypePrices.containsKey(selectedVehicleType)) {
+            int percentage = vehicleTypePrices.get(selectedVehicleType);
+            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
+        }
+
+        // Apply round trip discount
+        if (selectedTripType.equals("Round Trip")) {
+            calculatedBaseFare = calculatedBaseFare * 2; // Double the fare
+            calculatedBaseFare = calculatedBaseFare - (calculatedBaseFare * 10 / 100); // 10% discount
+        }
+
+        // Apply multiplier for number of passengers
+        calculatedBaseFare = calculatedBaseFare * selectedPassengers;
+
+        // Calculate offer discount
+        offerDiscount = 0;
+        if (appliedOffer != null && isOfferApplicable(appliedOffer, calculatedBaseFare)) {
+            offerDiscount = appliedOffer.calculateDiscount(calculatedBaseFare);
+        } else if (appliedOffer != null) {
+            // Show warning that offer is not applicable with current selection
+            messageText.setText("⚠️ Applied offer may not be valid with current selection. Please check offer terms.");
+            messageText.setVisibility(View.VISIBLE);
+        }
+
+        // Calculate taxes (after offer discount)
+        int fareAfterOffer = calculatedBaseFare - offerDiscount + optionsCost;
+        int taxes = fareAfterOffer * taxRate / 100;
+
+        // Calculate total fare
+        totalFare = fareAfterOffer + taxes;
+
+        // Update UI
+        fareText.setText(String.format(Locale.getDefault(), "Base Fare: PKR %,d", calculatedBaseFare));
+        optionsCostText.setText(String.format(Locale.getDefault(), "Options: PKR %,d", optionsCost));
+
+        // Show offer discount if applicable
+        TextView offerDiscountText = getView().findViewById(R.id.text_offer_discount);
+        if (offerDiscount > 0) {
+            offerDiscountText.setText(String.format(Locale.getDefault(), "Offer Discount: -PKR %,d", offerDiscount));
+            offerDiscountText.setVisibility(View.VISIBLE);
+            offerDiscountText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        } else {
+            offerDiscountText.setVisibility(View.GONE);
+        }
+
+        taxesText.setText(String.format(Locale.getDefault(), "Taxes (%d%%): PKR %,d", taxRate, taxes));
+        totalFareText.setText(String.format(Locale.getDefault(), "Total: PKR %,d", totalFare));
+    }
+
+
+    private void updateOfferUsage(String offerId) {
+        DocumentReference offerRef = db.collection("offers").document(offerId);
+        offerRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                long currentUsage = task.getResult().getLong("usageCount") != null ?
+                        task.getResult().getLong("usageCount") : 0;
+                offerRef.update("usageCount", currentUsage + 1);
+            }
+        });
+    }
+
 
     private void loadDataFromFirestore() {
         // Load ticket types
@@ -740,8 +1009,7 @@ public class Booking extends Fragment {
     }
 
     private void checkAvailability() {
-        // In a real app, this would check with the backend/Firestore
-        // For now, just simulate availability
+
         int randomPercent = (int) (Math.random() * 100);
 
         if (randomPercent < 80) {
@@ -848,49 +1116,6 @@ public class Booking extends Fragment {
         });
     }
 
-    private void updateFareDisplay() {
-        // Calculate the base fare
-        int calculatedBaseFare = baseFare;
-
-        // Apply ticket type adjustment
-        if (!selectedTicketType.isEmpty() && ticketTypePrices.containsKey(selectedTicketType)) {
-            int percentage = ticketTypePrices.get(selectedTicketType);
-            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
-        }
-
-        // Apply seat type adjustment
-        if (!selectedSeatType.isEmpty() && seatTypePrices.containsKey(selectedSeatType)) {
-            int percentage = seatTypePrices.get(selectedSeatType);
-            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
-        }
-
-        // Apply vehicle type adjustment
-        if (!selectedVehicleType.isEmpty() && vehicleTypePrices.containsKey(selectedVehicleType)) {
-            int percentage = vehicleTypePrices.get(selectedVehicleType);
-            calculatedBaseFare = calculatedBaseFare + (calculatedBaseFare * percentage / 100);
-        }
-
-        // Apply round trip discount
-        if (selectedTripType.equals("Round Trip")) {
-            calculatedBaseFare = calculatedBaseFare * 2; // Double the fare
-            calculatedBaseFare = calculatedBaseFare - (calculatedBaseFare * 10 / 100); // 10% discount
-        }
-
-        // Apply multiplier for number of passengers
-        calculatedBaseFare = calculatedBaseFare * selectedPassengers;
-
-        // Calculate taxes
-        int taxes = (calculatedBaseFare + optionsCost) * taxRate / 100;
-
-        // Calculate total fare
-        totalFare = calculatedBaseFare + optionsCost + taxes;
-
-        // Update UI
-        fareText.setText(String.format(Locale.getDefault(), "Base Fare: PKR %,d", calculatedBaseFare));
-        optionsCostText.setText(String.format(Locale.getDefault(), "Options: PKR %,d", optionsCost));
-        taxesText.setText(String.format(Locale.getDefault(), "Taxes (%d%%): PKR %,d", taxRate, taxes));
-        totalFareText.setText(String.format(Locale.getDefault(), "Total: PKR %,d", totalFare));
-    }
 
     private void setupBookButton() {
         bookTicketButton.setOnClickListener(new View.OnClickListener() {
@@ -1019,6 +1244,16 @@ public class Booking extends Fragment {
                                         bookingData.put("totalFare", totalFare);
                                         bookingData.put("status", "PENDING");
 
+                                        // Add offer information if applied
+                                        if (appliedOffer != null && offerDiscount > 0) {
+                                            Map<String, Object> offerInfo = new HashMap<>();
+                                            offerInfo.put("offerId", appliedOffer.getOfferId());
+                                            offerInfo.put("offerCode", appliedOffer.getOfferCode());
+                                            offerInfo.put("offerTitle", appliedOffer.getTitle());
+                                            offerInfo.put("discountAmount", offerDiscount);
+                                            bookingData.put("appliedOffer", offerInfo);
+                                        }
+
                                         // Optional: special requests
                                         String specialRequestsText = specialRequests.getText().toString().trim();
                                         if (!specialRequestsText.isEmpty()) {
@@ -1062,6 +1297,7 @@ public class Booking extends Fragment {
                         bookTicketButton.setEnabled(true);
                     }
                 });
+
     }
 
     private void updateUserBookings(String userId, String bookingId) {
@@ -1189,6 +1425,9 @@ public class Booking extends Fragment {
 
         // Reset button
         bookTicketButton.setEnabled(true);
+
+        // Reset offer
+        removeAppliedOffer();
     }
 
     private void navigateToBookingConfirmation(String bookingId) {

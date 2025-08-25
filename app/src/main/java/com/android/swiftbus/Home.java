@@ -20,15 +20,13 @@ public class Home extends Fragment {
 
     private static final String TAG = "HomeFragment";
 
-    private RecyclerView recyclerQuick, recyclerRecent;
-    private RecyclerView recyclerNotification;
+    private RecyclerView recyclerQuick, recyclerRecent, recyclerNotification;
     private List<QuickAccess> quickAccessList;
-    private QuickAccessAdapter quickAccessAdapter;
-
     private List<RecentRoute> recentRouteList;
     private List<Notification> notificationList;
     private RecentRouteAdapter recentRouteAdapter;
     private NotificationAdapter notificationAdapter;
+    private QuickAccessAdapter quickAccessAdapter;
     private FirebaseFirestore db;
 
     @Override
@@ -40,37 +38,35 @@ public class Home extends Fragment {
         // 1. Quick Access RecyclerView
         recyclerQuick = view.findViewById(R.id.recycler_quick);
         recyclerNotification = view.findViewById(R.id.recyclerNotification);
+        recyclerRecent = view.findViewById(R.id.recent_route);
         recyclerNotification.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false)
         );
         recyclerQuick.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
-
-        db = FirebaseFirestore.getInstance();
-        notificationList = new ArrayList<>();
-        quickAccessList = new ArrayList<>();
-        quickAccessList.add(new QuickAccess("Book a Ticket", R.drawable.ic_booking_q));
-        quickAccessList.add(new QuickAccess("My Bookings", R.drawable.ic_booking_q));
-        quickAccessList.add(new QuickAccess("Offers & Discounts", R.drawable.ic_booking_q));
-        quickAccessList.add(new QuickAccess("Travel History", R.drawable.ic_booking_q));
-        quickAccessList.add(new QuickAccess("Help & Support", R.drawable.ic_booking_q));
-
-        quickAccessAdapter = new QuickAccessAdapter(getContext(), quickAccessList);
-        notificationAdapter = new NotificationAdapter(getContext(), notificationList);
-        recyclerNotification.setAdapter(notificationAdapter);
-        recyclerQuick.setAdapter(quickAccessAdapter);
-
-        // 2. Recent Route RecyclerView
-        recyclerRecent = view.findViewById(R.id.recent_route);
         recyclerRecent.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
+
+        quickAccessList = new ArrayList<>();
+        quickAccessList.add(new QuickAccess("Book a Ticket", R.drawable.ic_booking_q));
+        quickAccessList.add(new QuickAccess("Offers & Discounts", R.drawable.ic_booking_q));
+        quickAccessList.add(new QuickAccess("Travel History", R.drawable.ic_booking_q));
+        quickAccessList.add(new QuickAccess("Help & Support", R.drawable.ic_booking_q));
+        quickAccessAdapter = new QuickAccessAdapter(getContext(), quickAccessList);
+        recyclerQuick.setAdapter(quickAccessAdapter);
+
+        notificationList = new ArrayList<>();
+        notificationAdapter = new NotificationAdapter(getContext(), notificationList);
+        recyclerNotification.setAdapter(notificationAdapter);
+
 
         recentRouteList = new ArrayList<>();
         recentRouteAdapter = new RecentRouteAdapter(getContext(), recentRouteList);
         recyclerRecent.setAdapter(recentRouteAdapter);
 
+        db = FirebaseFirestore.getInstance();
         // 3. Load data from Firestore
         loadRoutesFromFirestore();
         loadNotificationsFromFirestore();
@@ -86,7 +82,6 @@ public class Home extends Fragment {
         db.collection("Route") // Firestore collection name
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    recentRouteList.clear();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         // Convert each document into a RecentRoute object.
                         // Make sure Firestore fields match RecentRoute fields (title, image)
@@ -96,8 +91,7 @@ public class Home extends Fragment {
                             Log.d(TAG, "Loaded route: " + route.getTitle() + ", " + route.getImage());
                         }
                     }
-                    // Notify the adapter to refresh the RecyclerView
-                    recentRouteAdapter.notifyDataSetChanged();
+                    recentRouteAdapter.updateData(recentRouteList);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading routes from Firestore", e);
@@ -116,7 +110,7 @@ public class Home extends Fragment {
                             notificationList.add(notification);
                         }
                     }
-                    notificationAdapter.notifyDataSetChanged();
+                    notificationAdapter.updateData(notificationList);
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading notifications from Firestore", e);

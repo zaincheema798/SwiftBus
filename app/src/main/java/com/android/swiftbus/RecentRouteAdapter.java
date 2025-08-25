@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -41,22 +42,33 @@ public class RecentRouteAdapter extends RecyclerView.Adapter<RecentRouteAdapter.
                 .placeholder(R.drawable.ic_route)
                 .into(holder.image);
         holder.itemView.setOnClickListener(v -> {
-            // Handle item click if needed
+            // Store the route data for the booking fragment to access
             Bundle bundle = new Bundle();
             bundle.putSerializable("route", recentRoute);
             Fragment fragment = new Booking();
             fragment.setArguments(bundle);
+
+            // Replace the fragment first
             ((Main) context).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.framecontainer, fragment)
                     .addToBackStack(null)
                     .commit();
+
+            // Then update the bottom navigation to reflect the current state
+            ((BottomNavigationView) ((Main) context).findViewById(R.id.bottom_navigation))
+                    .setSelectedItemId(R.id.booking);
         });
     }
 
     @Override
     public int getItemCount() {
         return recentRouteList != null ? recentRouteList.size() : 0;
+    }
+
+    public void updateData(List<RecentRoute> recentRouteList) {
+        this.recentRouteList = recentRouteList;
+        notifyDataSetChanged();
     }
 
     public static class RRViewHolder extends RecyclerView.ViewHolder {

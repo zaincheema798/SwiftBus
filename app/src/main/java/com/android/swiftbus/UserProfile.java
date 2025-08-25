@@ -14,20 +14,9 @@ public class UserProfile {
     private int citiesCount;
     private int pointsCount;
 
-    private UserProfile(Builder builder) {
-        this.profileImageBase64 = builder.profileImageBase64;
-        this.name = builder.name;
-        this.membershipStatus = builder.membershipStatus;
-        this.email = builder.email;
-        this.phone = builder.phone;
-        this.gender = builder.gender;
-        this.age = builder.age;
-        this.bloodGroup = builder.bloodGroup;
-        this.address = builder.address;
-        this.tripsCount = builder.tripsCount;
-        this.citiesCount = builder.citiesCount;
-        this.pointsCount = builder.pointsCount;
+    public UserProfile() {
     }
+
     public UserProfile(String profileImageBase64, String name, String membershipStatus, String email, String phone,
                        String gender, String age, String bloodGroup, String address,
                        int tripsCount, int citiesCount, int pointsCount) {
@@ -170,8 +159,5 @@ public class UserProfile {
             return this;
         }
 
-        public UserProfile build() {
-            return new UserProfile(this);
-        }
     }
 }

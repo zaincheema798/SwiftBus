@@ -63,4 +63,8 @@
 
     <!-- Payment service colors -->
     <color name="easypaisa_green">#389E0D</color>
+
+
+    <color name="light_gray">#B0BEC5</color>
+    <color name="dark_gray">#757575</color>
 </resources>

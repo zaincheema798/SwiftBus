@@ -55,7 +55,7 @@ public class EditProfile extends AppCompatActivity {
     private Toolbar toolbar;
     private CircleImageView profileImageView;
     private FloatingActionButton changePhotoBtn;
-    private TextInputEditText editName, editEmail, editPhone, editAge, editAddress;
+    private TextInputEditText editName, editPhone, editAge, editAddress;
     private TextInputEditText editEmergencyName, editEmergencyPhone, editEmergencyRelation;
     private TextInputEditText editCurrentPassword, editNewPassword, editConfirmPassword;
     private AutoCompleteTextView editGender, editBloodGroup;
@@ -130,13 +130,8 @@ public class EditProfile extends AppCompatActivity {
         profileImageView = findViewById(R.id.edit_profile_image);
         changePhotoBtn = findViewById(R.id.change_photo_btn);
 
-        // Cover image UI components - make sure these are in your layout
-        // coverImageView = findViewById(R.id.edit_cover_image);
-        // changeCoverBtn = findViewById(R.id.change_cover_btn);
-
-        // Personal info fields
+             // Personal info fields
         editName = findViewById(R.id.edit_name);
-        editEmail = findViewById(R.id.edit_email);
         editPhone = findViewById(R.id.edit_phone);
         editGender = findViewById(R.id.edit_gender);
         editAge = findViewById(R.id.edit_age);
@@ -326,9 +321,6 @@ public class EditProfile extends AppCompatActivity {
             if (currentUser.getDisplayName() != null) {
                 editName.setText(currentUser.getDisplayName());
             }
-            if (currentUser.getEmail() != null) {
-                editEmail.setText(currentUser.getEmail());
-            }
         }
 
         // Load additional user info from Firestore if it exists, otherwise initialize with default values
@@ -352,20 +344,10 @@ public class EditProfile extends AppCompatActivity {
                         profileImageBase64 = document.getString("profileImageBase64");
                         coverImageBase64 = document.getString("coverImageBase64");
 
-                        // Get counts (with fallback to 0 if not found)
-                        if (document.getLong("tripsCount") != null) {
-                            tripsCount = document.getLong("tripsCount").intValue();
-                        }
-                        if (document.getLong("citiesCount") != null) {
-                            citiesCount = document.getLong("citiesCount").intValue();
-                        }
-                        if (document.getLong("pointsCount") != null) {
-                            pointsCount = document.getLong("pointsCount").intValue();
-                        }
+
 
                         // Fill the form fields
                         if (name != null) editName.setText(name);
-                        if (email != null) editEmail.setText(email);
                         if (phone != null) editPhone.setText(phone);
                         if (gender != null) editGender.setText(gender);
                         if (age != null) editAge.setText(age);
@@ -400,19 +382,11 @@ public class EditProfile extends AppCompatActivity {
                         //     loadBase64Image(coverImageBase64, coverImageView);
                         // }
                     } else {
-                        // Document doesn't exist, we'll create it when user saves
-                        membershipStatus = "Standard";
-                        tripsCount = 0;
-                        citiesCount = 0;
-                        pointsCount = 0;
-
                         // Set some default values from Firebase Auth if available
                         if (currentUser.getDisplayName() != null) {
                             editName.setText(currentUser.getDisplayName());
                         }
-                        if (currentUser.getEmail() != null) {
-                            editEmail.setText(currentUser.getEmail());
-                        }
+
 
                         Toast.makeText(EditProfile.this, "No profile found. Please update your information.",
                                 Toast.LENGTH_SHORT).show();
@@ -422,11 +396,7 @@ public class EditProfile extends AppCompatActivity {
                     Toast.makeText(EditProfile.this, "Failed to load user data: " + task.getException().getMessage(),
                             Toast.LENGTH_SHORT).show();
 
-                    // Set default values
-                    membershipStatus = "Standard";
-                    tripsCount = 0;
-                    citiesCount = 0;
-                    pointsCount = 0;
+
                 }
                 progressDialog.dismiss();
             }
@@ -438,7 +408,6 @@ public class EditProfile extends AppCompatActivity {
 
         // Get values from input fields
         String name = Objects.requireNonNull(editName.getText()).toString().trim();
-        String email = Objects.requireNonNull(editEmail.getText()).toString().trim();
         String phone = Objects.requireNonNull(editPhone.getText()).toString().trim();
         String gender = editGender.getText().toString().trim();
         String age = Objects.requireNonNull(editAge.getText()).toString().trim();
@@ -460,27 +429,18 @@ public class EditProfile extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(email)) {
-            editEmail.setError("Email is required");
-            progressDialog.dismiss();
-            return;
-        }
+
 
         // Create a map for user data update
         Map<String, Object> userUpdates = new HashMap<>();
         userUpdates.put("name", name);
-        userUpdates.put("email", email);
         userUpdates.put("phone", phone);
         userUpdates.put("gender", gender);
         userUpdates.put("age", age);
         userUpdates.put("bloodGroup", bloodGroup);
         userUpdates.put("address", address);
         userUpdates.put("membershipStatus", membershipStatus != null ? membershipStatus : "Standard");
-        userUpdates.put("tripsCount", tripsCount);
-        userUpdates.put("citiesCount", citiesCount);
-        userUpdates.put("pointsCount", pointsCount);
-
-        // Emergency contact info
+             // Emergency contact info
         Map<String, Object> emergencyUpdates = new HashMap<>();
         emergencyUpdates.put("name", emergencyName);
         emergencyUpdates.put("phone", emergencyPhone);
@@ -529,23 +489,6 @@ public class EditProfile extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Update email if changed
-                            String newEmail = Objects.requireNonNull(editEmail.getText()).toString().trim();
-                            if (!newEmail.equals(currentUser.getEmail())) {
-                                currentUser.updateEmail(newEmail)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (!task.isSuccessful()) {
-                                                    Toast.makeText(EditProfile.this, "Failed to update email: " +
-                                                                    Objects.requireNonNull(task.getException()).getMessage(),
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
-                            }
-                        }
                     }
                 });
 

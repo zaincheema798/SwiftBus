@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.swiftbus"
-        minSdk = 26
+        minSdk = 27
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -27,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -40,19 +40,19 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(platform(libs.firebase.bom))
+    implementation (libs.firebase.database)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
-    implementation(libs.play.services.auth)
     implementation (libs.play.services.maps)
     implementation (libs.play.services.location)
     implementation(libs.picasso)
     implementation (libs.glide.v4160)
     implementation(libs.circleimageview)
     implementation(libs.recyclerview)
-    implementation(libs.credentials)
-    implementation(libs.credentials.play.services.auth)
-    implementation(libs.googleid)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.credentials.v130)
+    implementation(libs.androidx.credentials.play.services.auth.v150)
+    implementation(libs.googleid)
     implementation(libs.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
